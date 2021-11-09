@@ -1,176 +1,104 @@
+/* As a user, I would like to display three unique products by chance so that the viewers can pick a favorite.
+
+Create a constructor function that creates an object associated with each product, and has the following properties:
+Name of the product
+File path of image
+Times the image has been shown */
 "use strict";
 
-let currentRound = 0;
-function Product(name, path) {
+let allProducts = document.getElementById("all_products");
+let leftProductsImg = document.getElementById("left_products_img");
+let centerProductsImg = document.getElementById("center_products_img");
+let rightProductsImg = document.getElementById("right_products_img");
+
+let totalClicks = 0;
+
+let leftProductOnPage = null;
+let rightProductOnPage = null;
+
+const ImageObject = function (name, filePath) {
   this.name = name;
-  this.path = path;
   this.clicks = 0;
-  this.shown = 0;
-  Product.all.push(this);
-}
-const oldValues = [Product.left, Product.right, Product.center];
-Product.all = [];
-Product.left = null;
-Product.center = null;
-Product.right = null;
-let banana = Product.all;
-Product.prototype.render = function (side) {
-  const imgElem = document.getElementById(side + "-img");
-  imgElem.src = this.path;
-  imgElem.alt = this.name;
-
-  const nameElem = document.getElementById(side + "-name");
-  nameElem.textContent = this.name;
-
-  this.shown += 1;
+  this.timesShown = 0;
+  this.filePath = filePath;
+  ImageObject.all.push(this);
 };
-//Fisher Yates shuffle https://bost.ocks.org/mike/shuffle/ #complete
-function getRandomProduct(arr) {
-  // const index = Math.floor(Math.random() * Product.all.length);
-  let arrLength = arr.length,
-    output,
-    index;
-  while (arrLength) {
-    index = Math.floor(Math.random() * arrLength--);
 
-    output = arr[arrLength];
-    arr[arrLength] = arr[index];
-    arr[index] = output;
+ImageObject.all = [];
+
+ImageObject.prototype.render = function (id) {
+  const imgElem = document.getElementById(id);
+  imgElem.src = this.filePath;
+  imgElem.alt = this.name;
+};
+
+function renderImages() {
+  //TODO: Select Randomly
+  const safeIndex = getRandomIndices();
+
+  const leftIndex = safeIndex[0];
+  const middleIndex = safeIndex[1];
+  const rightIndex = safeIndex[2];
+
+  const leftImageObj = ImageObject.all[leftIndex];
+  const centerImageObj = ImageObject.all[middleIndex];
+  const rightImageObj = ImageObject.all[rightIndex];
+
+  leftImageObj.render("left_products_img");
+  centerImageObj.render("center_products_img");
+  rightImageObj.render("right_products_img");
+}
+//TODO: Randomly select
+
+function getRandomIndices() {
+  // shuffle array
+  //grab first randomly
+  return [0, 1, 2];
+}
+// Attach an event listener to the section of the HTML page where the images are going to be displayed.
+
+// Once the users ‘clicks’ a product, generate three new products for the user to pick from.
+const handleUserClicks = function (e) {
+  console.log("alive");
+  if (totalClicks > 3) {
+    const itemsClicked = e.target;
+    const id = itemsClicked.id;
+
+    if (id === "left_product_img" || id === " right_product_img") {
+      if (id === "left_product_img") {
+        leftProductOnPage.clicks += 1;
+      }
+      if (id === "right_product_img") {
+        rightProductOnPage.clicks += 1;
+      }
+      leftProductOnPage.timesShown += 1;
+      rightProductOnPage.timesShown += 1;
+      // As a user, I would like to track the selections made by viewers so that I can determine which products to keep for the catalog.
+      // In the constructor function define a property to hold the number of times a product has been clicked.
+
+      // After every selection by the viewer, update the newly added property to reflect if it was clicked.
+      pickNewProducts();
+    }
   }
-  return arr;
-}
-
-function pickProducts() {
-  let shuffle = getRandomProduct(banana);
-
-  Product.left = shuffle[0];
-  Product.right = shuffle[1];
-  Product.center = shuffle[2];
-}
-
-function renderProducts() {
-  Product.left.render("left");
-  Product.right.render("right");
-  Product.center.render("center");
-}
-
-function makeProducts() {
-  new Product("bag", "/assets/images/bag.jpg");
-  new Product("banana", "/assets/images/banana.jpg");
-  new Product("bubblegum", "/assets/images/bubblegum.jpg");
-  new Product("pen", "/assets/images/pen.jpg");
-  new Product("bathroom", "/assets/images/bathroom.jpg");
-  new Product("boots", "/assets/images/boots.jpg");
-  new Product("breakfast", "/assets/images/breakfast.jpg");
-  new Product("chair", "/assets/images/chair.jpg");
-  new Product("cthulhu", "/assets/images/cthulhu.jpg");
-  new Product("dog-duck", "/assets/images/dog-duck.jpg");
-  new Product("dragon", "/assets/images/dragon.jpg");
-  new Product("pen", "/assets/images/pen.jpg");
-  new Product("pet-sweep", "/assets/images/pet-sweep.jpg");
-  new Product("scissors", "/assets/images/scissors.jpg");
-  new Product("shark", "/assets/images/shark.jpg");
-  new Product("sweep", "/assets/images/sweep.png");
-  new Product("tauntaun", "/assets/images//tauntaun.jpg");
-  new Product("unicorn", "/assets/images/unicorn.jpg");
-  new Product("water-can", "/assets/images/water-can.jpg");
-  new Product("wine-glass", "/assets/images/wine-glass.jpg");
-}
-
-function attachEventListner() {
-  const container = document.getElementById("product-container");
-  container.addEventListener("click", handleClick);
-}
-
-function removeEventListner() {
-  const container = document.getElementById("product-container");
-  container.removeEventListener("click", handleClick);
-}
-
-function handleClick(e) {
-  if (e.target.id === "left-img") {
-    Product.left.clicks += 1;
-  } else if (e.target.id === "right-img") {
-    Product.right.clicks += 1;
-  } else if (e.target.id === "center-img") {
-    Product.center.clicks += 1;
+  // increment amount of clicks
+  totalClicks++;
+  //when they reach total max clicks, remove the clicky function
+  if (totalClicks === 10) {
+    allProducts.removeEventListener("click", handleUserClicks);
+    console.log("stopped");
+    //TODO: display the clicks to the page
   }
-  currentRound += 1;
+};
 
-  if (currentRound === 2) {
-    document.getElementById("results").hidden = false;
-    removeEventListner();
-    renderChart();
-    renderList();
-  } else {
-    pickProducts();
-    renderProducts();
-  }
-}
+allProducts.addEventListener("click", handleUserClicks);
 
-function renderList() {
-  const ulElem = document.getElementById("results-list");
+// Products
+new ImageObject("bag", "./assets/images/bag.jpg");
+new ImageObject("banana", "./assets/images/banana.jpg");
+new ImageObject("bubblegum", "./assets/images/bubblegum.jpg");
+new ImageObject("pen", "./assets/images/pen.jpg");
 
-  for (let i = 0; i < Product.all.length; i++) {
-    const product = Product.all[i];
-    const liElem = document.createElement("li");
-    ulElem.appendChild(liElem);
-    liElem.textContent = `${product.name}: Was selected ${product.clicks} times`;
-  }
-}
+leftProductOnPage = ImageObject.all[1];
+rightProductOnPage = ImageObject.all[4];
 
-function renderChart() {
-  const productNamesArray = [];
-  const productClicksArray = [];
-
-  for (let i = 0; i < Product.all.length; i++) {
-    const product = Product.all[i];
-
-    const productName = product.name;
-    productNamesArray.push(productName);
-
-    const productClicks = product.clicks;
-    productClicksArray.push(productClicks);
-  }
-
-  const ctx = document.getElementById("results-chart").getContext("2d");
-  const productChart = new Chart(ctx, {
-    // The type of chart we want to create
-    type: "bar",
-
-    // The data for our dataset
-    data: {
-      labels: productNamesArray,
-      datasets: [
-        {
-          label: "Product Votes",
-          backgroundColor: "rgb(255, 99, 132)",
-          borderColor: "rgb(255, 99, 132)",
-          data: productClicksArray,
-        },
-      ],
-    },
-
-    // Configuration options go here
-    options: {
-      scales: {
-        yAxes: [
-          {
-            ticks: {
-              beginAtZero: true,
-            },
-          },
-        ],
-      },
-    },
-  });
-}
-
-function start() {
-  attachEventListner();
-  makeProducts();
-  pickProducts();
-  renderProducts();
-}
-
-start();
+renderImages();
