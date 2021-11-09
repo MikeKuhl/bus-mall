@@ -16,45 +16,45 @@ let totalClicks = 0;
 let leftProductOnPage = null;
 let rightProductOnPage = null;
 
-const ProductImage = function (name, filePath) {
+const ImageObject = function (name, filePath) {
   this.name = name;
   this.clicks = 0;
   this.timesShown = 0;
   this.filePath = filePath;
-  ProductImage.allImages.push(this);
+  ImageObject.all.push(this);
 };
 
-ProductImage.allImages = [];
+ImageObject.all = [];
 
-// function renderImage(productImage, id) {
-//   const imgElem = document.getElementById(id);
-//   imgElem.src = ProductImage.filePath;
-//   imgElem.alt = ProductImage.name;
-// }
-const renderNewProducts = function (leftIndex, rightIndex) {
-  leftProductsImg.src = ProductImage.allImages[leftIndex].filePath;
-  // centerProductsImg.src = ProductImage.allImages[leftIndex + 1].filePath;
-  rightProductsImg.src = ProductImage.allImages[rightIndex].filePath;
-  console.log(leftProductsImg.filePath, rightProductsImg.filePath);
+ImageObject.prototype.render = function (id) {
+  const imgElem = document.getElementById(id);
+  imgElem.src = this.filePath;
+  imgElem.alt = this.name;
 };
 
-const pickNewProducts = function () {
-  const leftIndex = Math.floor(Math.random() * ProductImage.allImages.length);
-  let rightIndex;
-  do {
-    rightIndex = Math.floor(Math.random() * ProductImage.allImages.length);
-  } while (rightIndex === leftIndex);
-  console.log(
-    ProductImage.allImages[leftIndex],
-    ProductImage.allImages[rightIndex]
-  );
+function renderImages() {
+  //TODO: Select Randomly
+  const safeIndex = getRandomIndices();
 
-  leftProductOnPage = ProductImage.allImages[leftIndex];
-  rightProductOnPage = ProductImage.allImages[rightIndex];
+  const leftIndex = safeIndex[0];
+  const middleIndex = safeIndex[1];
+  const rightIndex = safeIndex[2];
 
-  renderNewProducts(leftIndex, rightIndex);
-};
+  const leftImageObj = ImageObject.all[leftIndex];
+  const centerImageObj = ImageObject.all[middleIndex];
+  const rightImageObj = ImageObject.all[rightIndex];
 
+  leftImageObj.render("left_products_img");
+  centerImageObj.render("center_products_img");
+  rightImageObj.render("right_products_img");
+}
+//TODO: Randomly select
+
+function getRandomIndices() {
+  // shuffle array
+  //grab first randomly
+  return [0, 1, 2];
+}
 // Attach an event listener to the section of the HTML page where the images are going to be displayed.
 
 // Once the users ‘clicks’ a product, generate three new products for the user to pick from.
@@ -93,12 +93,12 @@ const handleUserClicks = function (e) {
 allProducts.addEventListener("click", handleUserClicks);
 
 // Products
-new ProductImage("bag", "./assets/images/bag.jpg");
-new ProductImage("banana", "./assets/images/banana.jpg");
-new ProductImage("bubblegum", "./assets/images/bubblegum.jpg");
-new ProductImage("pen", "./assets/images/pen.jpg");
+new ImageObject("bag", "./assets/images/bag.jpg");
+new ImageObject("banana", "./assets/images/banana.jpg");
+new ImageObject("bubblegum", "./assets/images/bubblegum.jpg");
+new ImageObject("pen", "./assets/images/pen.jpg");
 
-leftProductOnPage = ProductImage.allImages[1];
-rightProductOnPage = ProductImage.allImages[4];
+leftProductOnPage = ImageObject.all[1];
+rightProductOnPage = ImageObject.all[4];
 
-pickNewProducts();
+renderImages();
