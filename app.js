@@ -44,16 +44,19 @@ function renderImages() {
   const centerImageObj = ImageObject.all[middleIndex];
   const rightImageObj = ImageObject.all[rightIndex];
 
-  leftImageObj.render("left_products_img");
-  centerImageObj.render("center_products_img");
-  rightImageObj.render("right_products_img");
+  leftImageObj.render(leftProductsImg);
+  centerImageObj.render(centerProductsImg);
+  rightImageObj.render(rightProductsImg);
 }
 //TODO: Randomly select
 
 function getRandomIndices() {
   // shuffle array
+  for (let i = 0; i <= ImageObject.all.length; i++) {
+    return ImageObject.all.sort(() => Math.random());
+  }
+
   //grab first randomly
-  return [0, 1, 2];
 }
 // Attach an event listener to the section of the HTML page where the images are going to be displayed.
 
