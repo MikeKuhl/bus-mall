@@ -30,9 +30,17 @@ body {
 }
 
 
-  /* header,
-  nav,
-  main, */
+
+  header {
+
+  }
+  nav {
+
+  }
+
+  main{
+
+  }
   footer {
     background-color: sandybrown;
     grid-area: footer;
@@ -50,3 +58,4 @@ body {
 
 /* Found a CSS Grid tutorial and explanation from Mozzilla Developer
 https://www.youtube.com/watch?v=KOvGeFUHAC0 */
+
