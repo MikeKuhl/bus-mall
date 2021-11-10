@@ -35,6 +35,7 @@ function pickProducts() {
   const oldLeft = Product.left;
   const oldRight = Product.right;
   const oldCenter = Product.center;
+  const oldValues = [Product.left, Product.right, Product.center];
 
   do {
     Product.left = getRandomProduct();
@@ -59,6 +60,7 @@ function pickProducts() {
     Product.center === oldLeft ||
     Product.center === oldRight ||
     Product.center === oldCenter ||
+    Product.center === Product.right ||
     Product.center === Product.left
   );
 }
