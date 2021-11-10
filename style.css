@@ -1,0 +1,61 @@
+body {
+    min-height: 100vh;
+    display: grid;
+    grid-gap: 1em;
+    grid: 'header' auto
+          'nav' auto
+          'main' 1fr
+          'footer' auto
+        / 1fr;
+    background-color: dark-purple;
+  }
+
+  @media (min-width: 40em) {
+    body {
+      grid: 'header header' auto
+            'nav main' 1fr
+            'footer footer' auto
+          / 12em 1fr;
+    }
+  }
+
+  header { grid-area: header;
+    background-color: salmon;
+}
+  nav { grid-area: nav;
+    background-color: red;
+}
+  main { grid-area: main;
+    background-color: purple;
+}
+
+
+
+  header {
+
+  }
+  nav {
+
+  }
+
+  main{
+
+  }
+  footer {
+    background-color: sandybrown;
+    grid-area: footer;
+    padding: 1em;
+  }
+
+  img {
+    float: left;
+    width:  300px;
+    height: 250px;
+    object-fit: cover;
+    padding-left: 20px;
+
+}
+
+/* Found a CSS Grid tutorial and explanation from Mozzilla Developer
+https://www.youtube.com/watch?v=KOvGeFUHAC0 */
+
