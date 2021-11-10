@@ -1,107 +1,171 @@
-/* As a user, I would like to display three unique products by chance so that the viewers can pick a favorite.
-
-Create a constructor function that creates an object associated with each product, and has the following properties:
-Name of the product
-File path of image
-Times the image has been shown */
 "use strict";
 
-let allProducts = document.getElementById("all_products");
-let leftProductsImg = document.getElementById("left_products_img");
-let centerProductsImg = document.getElementById("center_products_img");
-let rightProductsImg = document.getElementById("right_products_img");
-
-let totalClicks = 0;
-
-let leftProductOnPage = null;
-let rightProductOnPage = null;
-
-const ImageObject = function (name, filePath) {
+let currentRound = 0;
+function Product(name, path) {
   this.name = name;
+  this.path = path;
   this.clicks = 0;
-  this.timesShown = 0;
-  this.filePath = filePath;
-  ImageObject.all.push(this);
-};
+  this.shown = 0;
+  Product.all.push(this);
+}
 
-ImageObject.all = [];
+Product.all = [];
+Product.left = null;
+Product.center = null;
+Product.right = null;
 
-ImageObject.prototype.render = function (id) {
-  const imgElem = document.getElementById(id);
-  imgElem.src = this.filePath;
+Product.prototype.render = function (side) {
+  const imgElem = document.getElementById(side + "-img");
+  imgElem.src = this.path;
   imgElem.alt = this.name;
+
+  const nameElem = document.getElementById(side + "-name");
+  nameElem.textContent = this.name;
+
+  this.shown += 1;
 };
 
-function renderImages() {
-  //TODO: Select Randomly
-  const safeIndex = getRandomIndices();
+function getRandomProduct() {
+  const index = Math.floor(Math.random() * Product.all.length);
 
-  const leftIndex = safeIndex[0];
-  const middleIndex = safeIndex[1];
-  const rightIndex = safeIndex[2];
-
-  const leftImageObj = ImageObject.all[leftIndex];
-  const centerImageObj = ImageObject.all[middleIndex];
-  const rightImageObj = ImageObject.all[rightIndex];
-
-  leftImageObj.render(leftProductsImg);
-  centerImageObj.render(centerProductsImg);
-  rightImageObj.render(rightProductsImg);
+  return Product.all[index];
 }
-//TODO: Randomly select
 
-function getRandomIndices() {
-  // shuffle array
-  for (let i = 0; i <= ImageObject.all.length; i++) {
-    return ImageObject.all.sort(() => Math.random());
-  }
+function pickProducts() {
+  const oldLeft = Product.left;
+  const oldRight = Product.right;
+  const oldCenter = Product.center;
 
-  //grab first randomly
+  do {
+    Product.left = getRandomProduct();
+  } while (
+    Product.left === oldLeft ||
+    Product.left === oldRight ||
+    Product.left === oldCenter
+  );
+  do {
+    Product.right = getRandomProduct();
+  } while (
+    Product.right === oldLeft ||
+    Product.right === oldRight ||
+    Product.right === oldCenter
+  );
+  do {
+    Product.center = getRandomProduct();
+  } while (
+    Product.center === oldLeft ||
+    Product.center === oldRight ||
+    Product.right === oldCenter
+  );
 }
-// Attach an event listener to the section of the HTML page where the images are going to be displayed.
 
-// Once the users ‘clicks’ a product, generate three new products for the user to pick from.
-const handleUserClicks = function (e) {
-  console.log("alive");
-  if (totalClicks > 3) {
-    const itemsClicked = e.target;
-    const id = itemsClicked.id;
+function renderProducts() {
+  Product.left.render("left");
+  Product.right.render("right");
+  Product.center.render("center");
+}
 
-    if (id === "left_product_img" || id === " right_product_img") {
-      if (id === "left_product_img") {
-        leftProductOnPage.clicks += 1;
-      }
-      if (id === "right_product_img") {
-        rightProductOnPage.clicks += 1;
-      }
-      leftProductOnPage.timesShown += 1;
-      rightProductOnPage.timesShown += 1;
-      // As a user, I would like to track the selections made by viewers so that I can determine which products to keep for the catalog.
-      // In the constructor function define a property to hold the number of times a product has been clicked.
+function makeProducts() {
+  new Product("bag", "/assets/images/bag.jpg");
+  new Product("banana", "/assets/images/banana.jpg");
+  new Product("bubblegum", "/assets/images/bubblegum.jpg");
+  new Product("pen", "/assets/images/pen.jpg");
+}
 
-      // After every selection by the viewer, update the newly added property to reflect if it was clicked.
-      pickNewProducts();
-    }
+function attachEventListner() {
+  const container = document.getElementById("product-container");
+  container.addEventListener("click", handleClick);
+}
+
+function removeEventListner() {
+  const container = document.getElementById("product-container");
+  container.removeEventListener("click", handleClick);
+}
+
+function handleClick(e) {
+  if (e.target.id === "left-img") {
+    Product.left.clicks += 1;
+  } else if (e.target.id === "right-img") {
+    Product.right.clicks += 1;
+  } else if (e.target.id === "center-img") {
+    Product.center.clicks += 1;
   }
-  // increment amount of clicks
-  totalClicks++;
-  //when they reach total max clicks, remove the clicky function
-  if (totalClicks === 10) {
-    allProducts.removeEventListener("click", handleUserClicks);
-    console.log("stopped");
-    //TODO: display the clicks to the page
+  currentRound += 1;
+
+  if (currentRound === 5) {
+    document.getElementById("results").hidden = false;
+    removeEventListner();
+    renderChart();
+    renderList();
+  } else {
+    pickProducts();
+    renderProducts();
   }
-};
+}
 
-allProducts.addEventListener("click", handleUserClicks);
+function renderList() {
+  const ulElem = document.getElementById("results-list");
 
-// Products
-new ImageObject("bag", "./assets/images/bag.jpg");
-new ImageObject("banana", "./assets/images/banana.jpg");
-new ImageObject("bubblegum", "./assets/images/bubblegum.jpg");
-new ImageObject("pen", "./assets/images/pen.jpg");
+  for (let i = 0; i < Product.all.length; i++) {
+    const product = Product.all[i];
+    const liElem = document.createElement("li");
+    ulElem.appendChild(liElem);
+    liElem.textContent = `${product.name}: Was selected ${product.clicks} times`;
+  }
+}
 
-leftProductOnPage = ImageObject.all[1];
-rightProductOnPage = ImageObject.all[4];
+function renderChart() {
+  const productNamesArray = [];
+  const productClicksArray = [];
 
-renderImages();
+  for (let i = 0; i < Product.all.length; i++) {
+    const product = Product.all[i];
+
+    const productName = product.name;
+    productNamesArray.push(productName);
+
+    const productClicks = product.clicks;
+    productClicksArray.push(productClicks);
+  }
+
+  const ctx = document.getElementById("results-chart").getContext("2d");
+  const productChart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: "bar",
+
+    // The data for our dataset
+    data: {
+      labels: productNamesArray,
+      datasets: [
+        {
+          label: "Product Votes",
+          backgroundColor: "rgb(255, 99, 132)",
+          borderColor: "rgb(255, 99, 132)",
+          data: productClicksArray,
+        },
+      ],
+    },
+
+    // Configuration options go here
+    options: {
+      scales: {
+        yAxes: [
+          {
+            ticks: {
+              beginAtZero: true,
+            },
+          },
+        ],
+      },
+    },
+  });
+}
+
+function start() {
+  attachEventListner();
+  makeProducts();
+  pickProducts();
+  renderProducts();
+}
+
+start();
