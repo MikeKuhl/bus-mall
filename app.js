@@ -1,7 +1,6 @@
 "use strict";
 
 let currentRound = 0;
-let shownh = 0;
 function Product(name, path) {
   this.name = name;
   this.path = path;
