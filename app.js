@@ -13,7 +13,7 @@ Product.all = [];
 Product.left = null;
 Product.center = null;
 Product.right = null;
-let banana = Product.all;
+let completeArr = Product.all;
 Product.prototype.render = function (side) {
   const imgElem = document.getElementById(side + "-img");
   imgElem.src = this.path;
@@ -48,7 +48,7 @@ function getRandomProduct(arr) {
 }
 
 function pickProducts() {
-  let shuffle = getRandomProduct(banana);
+  let shuffle = getRandomProduct(completeArr);
 
   Product.left = shuffle[0];
   Product.right = shuffle[1];
