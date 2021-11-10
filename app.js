@@ -13,7 +13,7 @@ Product.all = [];
 Product.left = null;
 Product.center = null;
 Product.right = null;
-
+let banana = Product.all;
 Product.prototype.render = function (side) {
   const imgElem = document.getElementById(side + "-img");
   imgElem.src = this.path;
@@ -31,38 +31,28 @@ function getRandomProduct() {
   return Product.all[index];
 }
 
-function pickProducts() {
-  const oldLeft = Product.left;
-  const oldRight = Product.right;
-  const oldCenter = Product.center;
-  const oldValues = [Product.left, Product.right, Product.center];
+//Fisher Yates shuffle https://bost.ocks.org/mike/shuffle/ #complete
+function getRandomProduct(arr) {
+  // const index = Math.floor(Math.random() * Product.all.length);
+  let arrLength = arr.length,
+    output,
+    index;
+  while (arrLength) {
+    index = Math.floor(Math.random() * arrLength--);
 
-  do {
-    Product.left = getRandomProduct();
-  } while (
-    Product.left === oldLeft ||
-    Product.left === oldRight ||
-    Product.left === oldCenter ||
-    Product.left === Product.right ||
-    Product.left === Product.center
-  );
-  do {
-    Product.right = getRandomProduct();
-  } while (
-    Product.right === oldLeft ||
-    Product.right === oldRight ||
-    Product.right === oldCenter ||
-    Product.right === Product.left
-  );
-  do {
-    Product.center = getRandomProduct();
-  } while (
-    Product.center === oldLeft ||
-    Product.center === oldRight ||
-    Product.center === oldCenter ||
-    Product.center === Product.right ||
-    Product.center === Product.left
-  );
+    output = arr[arrLength];
+    arr[arrLength] = arr[index];
+    arr[index] = output;
+  }
+  return arr;
+}
+
+function pickProducts() {
+  let shuffle = getRandomProduct(banana);
+
+  Product.left = shuffle[0];
+  Product.right = shuffle[1];
+  Product.center = shuffle[2];
 }
 
 function renderProducts() {
