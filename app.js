@@ -41,21 +41,25 @@ function pickProducts() {
   } while (
     Product.left === oldLeft ||
     Product.left === oldRight ||
-    Product.left === oldCenter
+    Product.left === oldCenter ||
+    Product.left === Product.right ||
+    Product.left === Product.center
   );
   do {
     Product.right = getRandomProduct();
   } while (
     Product.right === oldLeft ||
     Product.right === oldRight ||
-    Product.right === oldCenter
+    Product.right === oldCenter ||
+    Product.right === Product.left
   );
   do {
     Product.center = getRandomProduct();
   } while (
     Product.center === oldLeft ||
     Product.center === oldRight ||
-    Product.right === oldCenter
+    Product.center === oldCenter ||
+    Product.center === Product.left
   );
 }
 
@@ -70,6 +74,22 @@ function makeProducts() {
   new Product("banana", "/assets/images/banana.jpg");
   new Product("bubblegum", "/assets/images/bubblegum.jpg");
   new Product("pen", "/assets/images/pen.jpg");
+  new Product("bathroom", "/assets/images/bathroom.jpg");
+  new Product("boots", "/assets/images/boots.jpg");
+  new Product("breakfast", "/assets/images/breakfast.jpg");
+  new Product("chair", "/assets/images/chair.jpg");
+  new Product("cthulhu", "/assets/images/cthulhu.jpg");
+  new Product("dog-duck", "/assets/images/dog-duck.jpg");
+  new Product("dragon", "/assets/images/dragon.jpg");
+  new Product("pen", "/assets/images/pen.jpg");
+  new Product("pet-sweep", "/assets/images/pet-sweep.jpg");
+  new Product("scissors", "/assets/images/scissors.jpg");
+  new Product("shark", "/assets/images/shark.jpg");
+  new Product("sweep", "/assets/images/sweep.png");
+  new Product("tauntaun", "/assets/images//tauntaun.jpg");
+  new Product("unicorn", "/assets/images/unicorn.jpg");
+  new Product("water-can", "/assets/images/water-can.jpg");
+  new Product("wine-glass", "/assets/images/wine-glass.jpg");
 }
 
 function attachEventListner() {
@@ -92,7 +112,7 @@ function handleClick(e) {
   }
   currentRound += 1;
 
-  if (currentRound === 5) {
+  if (currentRound === 25) {
     document.getElementById("results").hidden = false;
     removeEventListner();
     renderChart();
