@@ -10,10 +10,13 @@ function Product(name, path) {
 }
 
 Product.all = [];
+
+let completeArr = Product.all;
+
 Product.left = null;
 Product.center = null;
 Product.right = null;
-let completeArr = Product.all;
+
 Product.prototype.render = function (side) {
   const imgElem = document.getElementById(side + "-img");
   imgElem.src = this.path;
@@ -25,24 +28,17 @@ Product.prototype.render = function (side) {
   this.shown += 1;
 };
 
-function getRandomProduct() {
-  const index = Math.floor(Math.random() * Product.all.length);
-
-  return Product.all[index];
-}
-
 //Fisher Yates shuffle https://bost.ocks.org/mike/shuffle/ #complete
 function getRandomProduct(arr) {
-  // const index = Math.floor(Math.random() * Product.all.length);
   let arrLength = arr.length,
-    output,
-    index;
+    placeHolder,
+    randIndex;
   while (arrLength) {
-    index = Math.floor(Math.random() * arrLength--);
+    randIndex = Math.floor(Math.random() * arrLength--);
 
-    output = arr[arrLength];
-    arr[arrLength] = arr[index];
-    arr[index] = output;
+    placeHolder = arr[arrLength];
+    arr[arrLength] = arr[randIndex];
+    arr[randIndex] = placeHolder;
   }
   return arr;
 }
@@ -59,6 +55,24 @@ function renderProducts() {
   Product.left.render("left");
   Product.right.render("right");
   Product.center.render("center");
+}
+function loadJSON() {
+  let myProductsJSON = localStorage.getItem("products");
+
+  if (myProductsJSON) {
+    getData();
+  } else {
+    makeProducts();
+  }
+}
+
+function getData(json) {
+  const product = JSON.parse(json);
+  for (let i = 0; i < product.length; i++) {
+    let dataProduct = new Product(product[i].name, product[i].path);
+    dataProduct.clicks = product.clicks;
+    dataProduct.shown = product.shown;
+  }
 }
 
 function makeProducts() {
@@ -107,6 +121,7 @@ function handleClick(e) {
   if (currentRound === 25) {
     document.getElementById("results").hidden = false;
     removeEventListner();
+    localStorage.setItem("products", JSON.stringify(Product.all));
     renderChart();
     renderList();
   } else {
@@ -178,6 +193,7 @@ function start() {
   makeProducts();
   pickProducts();
   renderProducts();
+  loadJSON();
 }
 
 start();
