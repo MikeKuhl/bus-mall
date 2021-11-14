@@ -7,7 +7,8 @@ body {
           'main' 1fr
           'footer' auto
         / 1fr;
-    background-color: dark-purple;
+    background-color: #264653;
+    color:#f4a261 ;
   }
 
   @media (min-width: 40em) {
@@ -20,29 +21,45 @@ body {
   }
 
   header { grid-area: header;
-    background-color: salmon;
+    /* background-color: salmon; */
+    border-style: solid;
+    border-color: #e76f51;
+    padding-left: 10px;
+
 }
   nav { grid-area: nav;
-    background-color: red;
+    border-style: solid;
+   border-color: #2a9d8f;
+   padding-left: 10px;
 }
   main { grid-area: main;
-    background-color: purple;
+    border-style: solid;
+    border-color: #e9c46a;
+    padding-left: 10px;
 }
 
 
 
-  header {
+
+  #left-name{
+    position:absolute;
+    bottom: 800px;
+    left: 300px;
 
   }
-  nav {
-
+  #center-name {
+    position:absolute;
+    bottom: 800px;
+    left: 650px;
   }
-
-  main{
-
+  #right-name {
+    position:absolute;
+    bottom: 800px;
+    left: 980px;
   }
   footer {
-    background-color: sandybrown;
+    border-style: solid;
+    border-color: sandybrown;
     grid-area: footer;
     padding: 1em;
   }
@@ -55,7 +72,3 @@ body {
     padding-left: 20px;
 
 }
-
-/* Found a CSS Grid tutorial and explanation from Mozzilla Developer
-https://www.youtube.com/watch?v=KOvGeFUHAC0 */
-

@@ -1,6 +1,8 @@
 "use strict";
 
 let currentRound = 0;
+
+//product constructor
 function Product(name, path) {
   this.name = name;
   this.path = path;
@@ -28,7 +30,7 @@ Product.prototype.render = function (side) {
   this.shown += 1;
 };
 
-//Fisher Yates shuffle https://bost.ocks.org/mike/shuffle/ #complete
+//Fisher Yates shuffle https://bost.ocks.org/mike/shuffle/
 function getRandomProduct(arr) {
   let arrLength = arr.length,
     placeHolder,
@@ -42,7 +44,7 @@ function getRandomProduct(arr) {
   }
   return arr;
 }
-
+//sets the random products to initially be displayed
 function pickProducts() {
   let shuffle = getRandomProduct(completeArr);
 
@@ -51,11 +53,14 @@ function pickProducts() {
   Product.center = shuffle[2];
 }
 
+//renders the random products to the page
 function renderProducts() {
   Product.left.render("left");
   Product.right.render("right");
   Product.center.render("center");
 }
+
+//checks for local storage
 function loadJSON() {
   let myProductsJSON = localStorage.getItem("products");
 
@@ -66,6 +71,7 @@ function loadJSON() {
   }
 }
 
+//parses data from json
 function getData(json) {
   const product = JSON.parse(json);
   for (let i = 0; i < product.length; i++) {
@@ -74,7 +80,7 @@ function getData(json) {
     dataProduct.shown = product.shown;
   }
 }
-
+//makes products using constructor function
 function makeProducts() {
   new Product("bag", "/assets/images/bag.jpg");
   new Product("banana", "/assets/images/banana.jpg");
@@ -107,7 +113,7 @@ function removeEventListner() {
   const container = document.getElementById("product-container");
   container.removeEventListener("click", handleClick);
 }
-
+//controls click event and adds clicks to images and rounds
 function handleClick(e) {
   if (e.target.id === "left-img") {
     Product.left.clicks += 1;
@@ -141,6 +147,7 @@ function renderList() {
   }
 }
 
+//controls chart render
 function renderChart() {
   const productNamesArray = [];
   const productClicksArray = [];
