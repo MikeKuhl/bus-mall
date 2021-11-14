@@ -1,6 +1,8 @@
 "use strict";
 
 let currentRound = 0;
+
+//product constructor
 function Product(name, path) {
   this.name = name;
   this.path = path;
@@ -10,6 +12,9 @@ function Product(name, path) {
 }
 
 Product.all = [];
+
+let completeArr = Product.all;
+
 Product.left = null;
 Product.center = null;
 Product.right = null;
@@ -25,52 +30,57 @@ Product.prototype.render = function (side) {
   this.shown += 1;
 };
 
-function getRandomProduct() {
-  const index = Math.floor(Math.random() * Product.all.length);
+//Fisher Yates shuffle https://bost.ocks.org/mike/shuffle/
+function getRandomProduct(arr) {
+  let arrLength = arr.length,
+    placeHolder,
+    randIndex;
+  while (arrLength) {
+    randIndex = Math.floor(Math.random() * arrLength--);
 
-  return Product.all[index];
+    placeHolder = arr[arrLength];
+    arr[arrLength] = arr[randIndex];
+    arr[randIndex] = placeHolder;
+  }
+  return arr;
 }
-
+//sets the random products to initially be displayed
 function pickProducts() {
-  const oldLeft = Product.left;
-  const oldRight = Product.right;
-  const oldCenter = Product.center;
-  const oldValues = [Product.left, Product.right, Product.center];
+  let shuffle = getRandomProduct(completeArr);
 
-  do {
-    Product.left = getRandomProduct();
-  } while (
-    Product.left === oldLeft ||
-    Product.left === oldRight ||
-    Product.left === oldCenter ||
-    Product.left === Product.right ||
-    Product.left === Product.center
-  );
-  do {
-    Product.right = getRandomProduct();
-  } while (
-    Product.right === oldLeft ||
-    Product.right === oldRight ||
-    Product.right === oldCenter ||
-    Product.right === Product.left
-  );
-  do {
-    Product.center = getRandomProduct();
-  } while (
-    Product.center === oldLeft ||
-    Product.center === oldRight ||
-    Product.center === oldCenter ||
-    Product.center === Product.right ||
-    Product.center === Product.left
-  );
+  Product.left = shuffle[0];
+  Product.right = shuffle[1];
+  Product.center = shuffle[2];
 }
 
+//renders the random products to the page
 function renderProducts() {
   Product.left.render("left");
   Product.right.render("right");
   Product.center.render("center");
 }
 
+//checks for local storage
+function loadJSON() {
+  let myProductsJSON = localStorage.getItem("products");
+
+  if (myProductsJSON) {
+    getData();
+  } else {
+    makeProducts();
+  }
+}
+
+//parses data from json
+function getData(json) {
+  const product = JSON.parse(json);
+  for (let i = 0; i < product.length; i++) {
+    let dataProduct = new Product(product[i].name, product[i].path);
+    dataProduct.clicks = product.clicks;
+    dataProduct.shown = product.shown;
+  }
+}
+//makes products using constructor function
 function makeProducts() {
   new Product("bag", "/assets/images/bag.jpg");
   new Product("banana", "/assets/images/banana.jpg");
@@ -103,7 +113,7 @@ function removeEventListner() {
   const container = document.getElementById("product-container");
   container.removeEventListener("click", handleClick);
 }
-
+//controls click event and adds clicks to images and rounds
 function handleClick(e) {
   if (e.target.id === "left-img") {
     Product.left.clicks += 1;
@@ -117,6 +127,7 @@ function handleClick(e) {
   if (currentRound === 25) {
     document.getElementById("results").hidden = false;
     removeEventListner();
+    localStorage.setItem("products", JSON.stringify(Product.all));
     renderChart();
     renderList();
   } else {
@@ -136,6 +147,7 @@ function renderList() {
   }
 }
 
+//controls chart render
 function renderChart() {
   const productNamesArray = [];
   const productClicksArray = [];
@@ -188,6 +200,7 @@ function start() {
   makeProducts();
   pickProducts();
   renderProducts();
+  loadJSON();
 }
 
 start();
